@@ -10,6 +10,7 @@ from second.core import box_np_ops
 from second.core.point_cloud.point_cloud_ops import bound_points_jit
 from second.data import kitti_common as kitti
 from second.utils.progress_bar import list_bar as prog_bar
+
 """
 Note: tqdm has problem in my system(win10), so use my progress bar
 try:
@@ -33,6 +34,7 @@ def _calculate_num_points_in_gt(data_path, infos, relative_path, remove_outside=
             v_path = info["velodyne_path"]
         points_v = np.fromfile(
             v_path, dtype=np.float32, count=-1).reshape([-1, num_features])
+
         rect = info['calib/R0_rect']
         Trv2c = info['calib/Tr_velo_to_cam']
         P2 = info['calib/P2']
@@ -236,7 +238,7 @@ def create_groundtruth_database(data_path,
         Trv2c = info['calib/Tr_velo_to_cam']
         if not lidar_only:
             points = box_np_ops.remove_outside_points(points, rect, Trv2c, P2,
-                                                        info["img_shape"])
+                                                      info["img_shape"])
 
         annos = info["annos"]
         names = annos["name"]
@@ -246,11 +248,11 @@ def create_groundtruth_database(data_path,
         num_obj = np.sum(annos["index"] >= 0)
         rbbox_cam = kitti.anno_to_rbboxes(annos)[:num_obj]
         rbbox_lidar = box_np_ops.box_camera_to_lidar(rbbox_cam, rect, Trv2c)
-        if bev_only: # set z and h to limits
+        if bev_only:  # set z and h to limits
             assert coors_range is not None
             rbbox_lidar[:, 2] = coors_range[2]
             rbbox_lidar[:, 5] = coors_range[5] - coors_range[2]
-        
+
         group_dict = {}
         group_ids = np.full([bboxes.shape[0]], -1, dtype=np.int64)
         if "group_ids" in annos:

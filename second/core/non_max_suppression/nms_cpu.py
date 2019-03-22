@@ -10,12 +10,23 @@ try:
     from second.core.non_max_suppression.nms import (
         non_max_suppression_cpu, rotate_non_max_suppression_cpu)
 except:
-    current_dir = Path(__file__).resolve().parents[0]
+    """ AdLi Remove:
+    
     load_pb11(
         ["../cc/nms/nms_kernel.cu.cc", "../cc/nms/nms.cc"],
         current_dir / "nms.so",
         current_dir,
         cuda=True)
+    """
+    # AdLi Add:
+    current_dir = Path(__file__).resolve().parents[0]
+    load_pb11(
+        ["../cc/nms/nms_kernel.cu.cc", "../cc/nms/nms.cc"],
+        current_dir / "nms.so",
+        current_dir,
+        includes=["/usr/include/boost"],
+        cuda=True)
+
     from second.core.non_max_suppression.nms import (
         non_max_suppression_cpu, rotate_non_max_suppression_cpu)
 

@@ -133,6 +133,7 @@ def get_kitti_image_info(path,
                          with_imageshape=True):
     # image_infos = []
     root_path = pathlib.Path(path)
+    print('Root path: {}'.format(root_path))
     if not isinstance(image_ids, list):
         image_ids = list(range(image_ids))
 
